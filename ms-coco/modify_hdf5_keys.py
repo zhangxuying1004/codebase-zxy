@@ -1,3 +1,7 @@
+"""
+功能：将hdf5文件中的键名由'%d_features' % image_id 修改为'%d_regions' & image_id
+"""
+
 import os
 import h5py
 from tqdm import tqdm
