@@ -45,7 +45,7 @@ if __name__ == '__main__':
     parser.add_argument('--path_to_after_res50feats_trainval', type=str, default='./datasets/feats/res50_coco_test.hdf5')
     
     # test ann file
-    parser.add_argument('--path_to_test_ann_files', type=str, default='test')  # test
+    parser.add_argument('--path_to_test_ann_files', type=list, default=['./datasets/annotations/image_info_test2014.json'])  # test
     parser.add_argument('--path_to_before_X101feats_test', type=str, default='./datasets0/feats/X101_coco_test.hdf5')
     parser.add_argument('--path_to_before_res50feats_test', type=str, default='./datasets0/feats/res50_coco_test.hdf5')
     parser.add_argument('--path_to_after_X101feats_test', type=str, default='./dataset/feats/X101_coco_test.hdf5')
