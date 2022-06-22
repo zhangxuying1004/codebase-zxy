@@ -1,5 +1,5 @@
 """
-功能：将hdf5文件中的键名由'%d_features' % image_id 修改为'%d_regions' & image_id
+功能：将存储coco数据集视觉特征的hdf5文件中的键名由'%d_features' % image_id 修改为'%d_regions' & image_id
 """
 
 import os
@@ -34,8 +34,8 @@ def read_image_ids(path_to_ann_files):
   
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='data process') 
-    parser.add_argument('--backbone', type=str, default='X101') # 'X101', 'resnet50'
-    parser.add_argument('--datatype', type=str, default='test') # 'trainval', 'test'
+    parser.add_argument('--backbone', type=str, default='X101') # 提取特征的网络，'X101', 'resnet50'
+    parser.add_argument('--datasplit', type=str, default='test') # 'trainval', 'test'
     
     # trainval
     parser.add_argument('--path_to_trainval_ann_files', type=list, default=['./datasets/annotations/captions_train2014.json', './datasets/annotations/captions_val2014.json'])
@@ -54,18 +54,18 @@ if __name__ == '__main__':
     args = parser.parse_args()
     print(args)
     
-    if args.datatype == 'trainval':
+    if args.datasplit == 'trainval':
         image_ids = read_image_ids(args.path_to_trainval_ann_files)
     else:
         image_ids = read_image_ids(args.path_to_test_ann_files)
     
     if args.backbone == 'X101':
-        if args.datatype == 'trainval':
+        if args.datasplit == 'trainval':
             dataset_process(args.path_to_before_X101feats_trainval, args.path_to_after_X101feats_trainval, image_ids)
         else:
             dataset_process(args.path_to_before_X101feats_test, args.path_to_after_X101feats_test, image_ids)
     else:
-        if args.datatype == 'trainval':
+        if args.datasplit == 'trainval':
             dataset_process(args.path_to_before_res50feats_trainval, args.path_to_after_res50feats_trainval, image_ids)
         else:
             dataset_process(args.path_to_before_res50feats_test, args.path_to_after_res50feats_test, image_ids)
