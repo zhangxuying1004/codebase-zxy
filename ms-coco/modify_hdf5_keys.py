@@ -6,6 +6,8 @@ import os
 import h5py
 from tqdm import tqdm
 import argparse
+import json
+import warnings
 
 def read_image_ids(path_to_ann_files):
     image_ids = []
@@ -16,7 +18,7 @@ def read_image_ids(path_to_ann_files):
         image_ids += [item['id'] for item in images_info]
     return image_ids
 
- def dataset_process(path_to_before_feats, path_to_after_feats, image_ids=None): 
+def dataset_process(path_to_before_feats, path_to_after_feats, image_ids=None): 
     assert image_ids is not None
     with h5py.File(path_to_after_feats, 'w') as f_after:    # 生成新的hdf5文件
         f_before = h5py.File(path_to_before_feats, 'r')     # 读取旧的hdf5文件
@@ -25,7 +27,7 @@ def read_image_ids(path_to_ann_files):
             try:
                 feats = f_before['%d_features' % image_id][()]
             except KeyError:
-                warnings.warn('Could not find {} feats for {}'.format(backbone, image_id))
+                warnings.warn('Could not find visual feats for {}'.format(image_id))
                 return None
             f_after.create_dataset('%d_regions' % image_id, data=feats)   # 将数据插入新文件中
     f_before.close()
@@ -39,10 +41,10 @@ if __name__ == '__main__':
     
     # trainval
     parser.add_argument('--path_to_trainval_ann_files', type=list, default=['./datasets/annotations/captions_train2014.json', './datasets/annotations/captions_val2014.json'])
-    parser.add_argument('--path_to_before_X101feats_trainval', type=str, default='./datasets0/feats/X101_coco_test.hdf5')
-    parser.add_argument('--path_to_before_res50feats_trainval', type=str, default='./datasets0/feats/res50_coco_test.hdf5')
-    parser.add_argument('--path_to_after_X101feats_trainval', type=str, default='./dataset/feats/X101_coco_test.hdf5')
-    parser.add_argument('--path_to_after_res50feats_trainval', type=str, default='./datasets/feats/res50_coco_test.hdf5')
+    parser.add_argument('--path_to_before_X101feats_trainval', type=str, default='./datasets0/feats/X101_coco_trainval.hdf5')
+    parser.add_argument('--path_to_before_res50feats_trainval', type=str, default='./datasets0/feats/res50_coco_trainval.hdf5')
+    parser.add_argument('--path_to_after_X101feats_trainval', type=str, default='./dataset/feats/X101_coco_trainval.hdf5')
+    parser.add_argument('--path_to_after_res50feats_trainval', type=str, default='./datasets/feats/res50_coco_trainval.hdf5')
     
     # test ann file
     parser.add_argument('--path_to_test_ann_files', type=list, default=['./datasets/annotations/image_info_test2014.json'])  # test
@@ -69,6 +71,4 @@ if __name__ == '__main__':
             dataset_process(args.path_to_before_res50feats_trainval, args.path_to_after_res50feats_trainval, image_ids)
         else:
             dataset_process(args.path_to_before_res50feats_test, args.path_to_after_res50feats_test, image_ids)
-    
-    
     
